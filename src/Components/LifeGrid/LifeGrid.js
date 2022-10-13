@@ -1,6 +1,12 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import "./LifeGrid.scss";
 
+/***************************** RULES OF CONWAY'S GAME OF LIFE: **********************************
+  1. Any live cell with two or three live neighbours survives.
+  2. Any dead cell with three live neighbours becomes a live cell.
+  3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+*************************************************************************************************/
+
 const GRID_WIDTH = 64;
 const GRID_HEIGHT = 64;
 
@@ -20,8 +26,13 @@ export default function LifeGrid() {
   const toggleCellState = (e) => {
     const x = parseInt(e.target.getAttribute("row"));
     const y = parseInt(e.target.getAttribute("col"));
-    divGrid.current[x][y].classList.toggle("alive");
-    indexGrid.current[x][y] = !indexGrid.current[x][y];
+    if (
+      divGrid.current[x] !== undefined &&
+      divGrid.current[x][y] !== undefined
+    ) {
+      divGrid.current[x][y].classList.toggle("alive");
+      indexGrid.current[x][y] = !indexGrid.current[x][y];
+    }
   };
 
   const initGrid = () => {
@@ -41,7 +52,11 @@ export default function LifeGrid() {
             col={y}
             ref={(ref) => (divGrid.current[x][y] = ref)}
             onClick={(e) => toggleCellState(e)}
-          />
+          >
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="50" />
+            </svg>
+          </div>
         );
       }
       row.push(col);
@@ -55,16 +70,17 @@ export default function LifeGrid() {
   }, []);
 
   useEffect(() => {
-    if(autoTick){
-      tickInterval.current = setInterval(() => updateGrid(), 200)
+    if (autoTick) {
+      tickInterval.current = setInterval(() => updateGrid(), 200);
     } else {
       clearInterval(tickInterval.current);
     }
     return () => {
       clearInterval(tickInterval.current);
-    }
-  }, [autoTick])
+    };
+  }, [autoTick]);
 
+  // Uses a deep copy of the grid and calculates the next generation
   const updateGrid = () => {
     let newIndexGrid = JSON.parse(JSON.stringify(indexGrid.current));
     newIndexGrid.forEach((col, x) => {
@@ -86,6 +102,7 @@ export default function LifeGrid() {
     indexGrid.current = JSON.parse(JSON.stringify(newIndexGrid));
   };
 
+  // Check if a cell is alive on the currently rendered grid
   const isAlive = (x, y) => {
     if (
       indexGrid.current[x] !== undefined &&
@@ -96,6 +113,7 @@ export default function LifeGrid() {
     return false;
   };
 
+  // Check how many living neighbours a cell has
   const numLiveNeighbours = (x, y) => {
     let count = 0;
     if (isAlive(x - 1, y - 1)) {
@@ -127,11 +145,20 @@ export default function LifeGrid() {
 
   return (
     <div>
-      <div className="button next-generation" onClick={updateGrid}>
-        Next generation
-      </div>
-      <div className="button auto-tick" onClick={() => setAutoTick(!autoTick)}>
-        Auto tick
+      <div className="button-container">
+        <button
+          className="button tick-once"
+          disabled={autoTick}
+          onClick={updateGrid}
+        >
+          Tick once
+        </button>
+        <button
+          className={`button auto-tick ${autoTick ? "enabled" : ""}`}
+          onClick={() => setAutoTick(!autoTick)}
+        >
+          Auto tick
+        </button>
       </div>
       <div className="grid-wrapper" ref={gridWrapper}>
         {grid}

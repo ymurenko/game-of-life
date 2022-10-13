@@ -1,0 +1,31 @@
+$CELL_SIZE: 1.5625vh;
+$DIMENSIONS: 64;
+$CELL_BORDER_WIDTH: 1px;
+$CELL_EASE: cubic-bezier(0.65, 0, 0.35, 1);
+
+$WHITE: #ffffff;
+$BLACK: #000000;
+
+$BG_COLOR: $BLACK;
+$GRID_COLOR_LIGHT: #dadada;
+$GRID_COLOR: #292929;
+$ACCENT_COLOR: #a0a0a0;
+$CELL_COLOR: #B7A66D;
+
+$FONT: "Raleway";
+$FONT_COLOR: $ACCENT_COLOR;
+$FONT_WEIGHT: 400;
+$FONT_SIZE: 10px;
+$FONT_LETTER_SPACING: 0.5px;
+
+/* raleway-regular - latin */
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''),
+         url('./Fonts/raleway-v28-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+         url('./Fonts/raleway-v28-latin-regular.woff') format('woff'), /* Modern Browsers */
+  }
+  
+

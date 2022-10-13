@@ -1,9 +1,9 @@
-import './App.css';
+import './App.scss';
 import LifeGrid from './Components/LifeGrid/LifeGrid.js';
 
 function App() {
   return (
-    <div className="App">
+    <div className="app-root">
       <LifeGrid/>
     </div>
   );
