@@ -1,82 +1,81 @@
-@import '../../Globals.scss';
+@import "../../Globals.scss";
 
 .button-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    .button {
-        width: 80px;
-        height: 25px;
-        cursor: pointer;
-        font-family: $FONT;
-        font-weight: $FONT_WEIGHT;
-        font-size: $FONT_SIZE;
-        letter-spacing: $FONT_LETTER_SPACING;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  .button {
+    width: 80px;
+    height: 25px;
+    cursor: pointer;
+    font-family: $FONT;
+    font-weight: $FONT_WEIGHT;
+    font-size: $FONT_SIZE;
+    letter-spacing: $FONT_LETTER_SPACING;
+    color: $ACCENT_COLOR;
+    background: none;
+    border: 1px solid $ACCENT_COLOR;
+    border-radius: 20px;
+    &.auto-tick {
+      &.enabled {
+        background-color: $CELL_ALIVE_COLOR;
         color: $WHITE;
-        background: none;
-        border: 1px solid $GRID_COLOR;
-        border-radius: 20px;
-        &.auto-tick {
-            &.enabled {
-                background-color: $CELL_COLOR;
-            }
-        }
-        &:disabled{
-            color: $GRID_COLOR;
-            cursor: unset;
-        }
+      }
     }
+    &:disabled {
+      color: $CELL_DEAD_COLOR;
+      cursor: unset;
+    }
+  }
 }
 
-
 .grid-wrapper {
-    display: grid;
-    grid-template-columns: repeat($DIMENSIONS, 1fr);
-    grid-template-rows: repeat($DIMENSIONS, 1fr);
+  display: grid;
+  grid-template-columns: repeat($DIMENSIONS, 1fr);
+  grid-template-rows: repeat($DIMENSIONS, 1fr);
+  box-sizing: border-box;
+  width: fit-content;
+  margin: auto;
+  .grid-item {
+    width: $CELL_SIZE;
+    height: $CELL_SIZE;
+    border: $CELL_BORDER_WIDTH solid $GRID_COLOR;
+    border-radius: $CELL_SIZE;
     box-sizing: border-box;
-    width: fit-content;
-    .grid-item {
-        width: $CELL_SIZE;
-        height: $CELL_SIZE;
-        border: $CELL_BORDER_WIDTH solid $GRID_COLOR;
-        border-radius: $CELL_SIZE;
-        box-sizing: border-box;
-        color: black;
-        font-size: 10px;
-        // transition: all ease-in-out 0.2s;
-        animation-name: fadeColor;
-        animation-duration: 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        svg {
-            width: 0%;
-            height: 0%;
-            transition: all 0.4s $CELL_EASE;
-            fill: $BG_COLOR;
-        }
-        &.alive{
-            svg {
-                width: 99%;
-                height: 99%;
-                fill: $CELL_COLOR;
-            }
-        }
+    color: black;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    svg {
+      width: 35%;
+      height: 35%;
+      transition: all 0.5s ease-in-out;
+      fill: $CELL_DEAD_COLOR;
     }
+    &.alive {
+      svg {
+        width: 99%;
+        height: 99%;
+        fill: $CELL_ALIVE_COLOR;
+      }
+    }
+  }
 }
 
 @keyframes fadeColor {
-    from {
-     background-color: rgb(255, 255, 255);
-    }
-  
-    75% {
-     background-color: rgb(87, 39, 0);
-    }
-  
-    to {
-     background-color: rgb(0, 0, 0);
-    }
+  from {
+    background-color: rgb(255, 255, 255);
   }
+
+  75% {
+    background-color: rgb(87, 39, 0);
+  }
+
+  to {
+    background-color: rgb(0, 0, 0);
+  }
+}

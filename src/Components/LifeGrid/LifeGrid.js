@@ -71,7 +71,7 @@ export default function LifeGrid() {
 
   useEffect(() => {
     if (autoTick) {
-      tickInterval.current = setInterval(() => updateGrid(), 200);
+      tickInterval.current = setInterval(() => updateGrid(), 250);
     } else {
       clearInterval(tickInterval.current);
     }
