@@ -1,81 +1,83 @@
 @import "../../Globals.scss";
 
-.button-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  .button {
-    width: 80px;
-    height: 25px;
-    cursor: pointer;
-    font-family: $FONT;
-    font-weight: $FONT_WEIGHT;
-    font-size: $FONT_SIZE;
-    letter-spacing: $FONT_LETTER_SPACING;
-    color: $ACCENT_COLOR;
-    background: none;
-    border: 1px solid $ACCENT_COLOR;
-    border-radius: 20px;
-    &.auto-tick {
-      &.enabled {
-        background-color: $CELL_ALIVE_COLOR;
-        color: $WHITE;
-      }
-    }
-    &:disabled {
-      color: $CELL_DEAD_COLOR;
-      cursor: unset;
-    }
-  }
-}
-
-.grid-wrapper {
-  display: grid;
-  grid-template-columns: repeat($DIMENSIONS, 1fr);
-  grid-template-rows: repeat($DIMENSIONS, 1fr);
-  box-sizing: border-box;
-  width: fit-content;
-  margin: auto;
-  .grid-item {
-    width: $CELL_SIZE;
-    height: $CELL_SIZE;
-    border: $CELL_BORDER_WIDTH solid $GRID_COLOR;
-    border-radius: $CELL_SIZE;
-    box-sizing: border-box;
-    color: black;
-    font-size: 10px;
-    cursor: pointer;
+.life-grid-root {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+  .button-container {
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    svg {
-      width: 35%;
-      height: 35%;
-      transition: all 0.5s ease-in-out;
-      fill: $CELL_DEAD_COLOR;
-    }
-    &.alive {
-      svg {
-        width: 99%;
-        height: 99%;
-        fill: $CELL_ALIVE_COLOR;
+    gap: 5px;
+    .button {
+      width: 80px;
+      height: 25px;
+      cursor: pointer;
+      font-family: $FONT;
+      font-weight: $FONT_WEIGHT;
+      font-size: $FONT_SIZE;
+      letter-spacing: $FONT_LETTER_SPACING;
+      color: $BUTTON_TEXT_COLOR;
+      background: none;
+      border: 1px solid $BUTTON_BORDER_COLOR;
+      border-radius: 20px;
+      &.auto-tick {
+        &.enabled {
+          background-color: $CELL_ALIVE_COLOR;
+          color: $WHITE;
+        }
+      }
+      &:disabled {
+        color: $CELL_DEAD_COLOR;
+        cursor: unset;
       }
     }
   }
-}
 
-@keyframes fadeColor {
-  from {
-    background-color: rgb(255, 255, 255);
-  }
-
-  75% {
-    background-color: rgb(87, 39, 0);
-  }
-
-  to {
-    background-color: rgb(0, 0, 0);
+  .grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat($DIMENSIONS, 1fr);
+    grid-template-rows: repeat($DIMENSIONS, 1fr);
+    box-sizing: border-box;
+    width: fit-content;
+    margin: auto;
+    .grid-item {
+      width: $CELL_SIZE;
+      height: $CELL_SIZE;
+      border: $CELL_BORDER_WIDTH solid $GRID_COLOR;
+      border-radius: $CELL_SIZE;
+      box-sizing: border-box;
+      color: black;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      svg {
+        width: 35%;
+        height: 35%;
+        pointer-events: none;
+      }
+      &:hover {
+        background-color: $CELL_DEAD_COLOR;
+      }
+      &.dead {
+        svg {
+          width: 35%;
+          height: 35%;
+          fill: $CELL_DEAD_COLOR;
+          transition: all 0.5s;
+        }
+      }
+      &.alive {
+        svg {
+          width: 99%;
+          height: 99%;
+          fill: $CELL_ALIVE_COLOR;
+          transition: all 0.2s ease-in;
+        }
+      }
+    }
   }
 }

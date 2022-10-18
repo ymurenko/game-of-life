@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./LifeGrid.scss";
 
 /***************************** RULES OF CONWAY'S GAME OF LIFE: **********************************
@@ -7,8 +7,8 @@ import "./LifeGrid.scss";
   3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 *************************************************************************************************/
 
-const GRID_WIDTH = 64;
-const GRID_HEIGHT = 64;
+const GRID_WIDTH = 50;
+const GRID_HEIGHT = 50;
 
 const CellStatus = {
   ALIVE: true,
@@ -23,14 +23,30 @@ export default function LifeGrid() {
   const [autoTick, setAutoTick] = useState(false);
   const [grid, setGrid] = useState();
 
-  const toggleCellState = (e) => {
+  // Check if a cell is alive on the currently rendered grid
+  const isAlive = (x, y) => {
+    if (
+      indexGrid.current[x] !== undefined &&
+      indexGrid.current[x][y] !== undefined
+    ) {
+      return indexGrid.current[x][y];
+    }
+    return false;
+  };
+
+  const toggleCellState = (cell) => {
+    cell.classList.toggle("alive");
+    cell.classList.toggle("dead");
+  }
+
+  const handleCellClick = (e) => {
     const x = parseInt(e.target.getAttribute("row"));
     const y = parseInt(e.target.getAttribute("col"));
     if (
       divGrid.current[x] !== undefined &&
       divGrid.current[x][y] !== undefined
     ) {
-      divGrid.current[x][y].classList.toggle("alive");
+      toggleCellState(divGrid.current[x][y]);
       indexGrid.current[x][y] = !indexGrid.current[x][y];
     }
   };
@@ -47,11 +63,11 @@ export default function LifeGrid() {
         col.push(
           <div
             key={`${x}, ${y}`}
-            className={"grid-item"}
+            className={"grid-item dead"}
             row={x}
             col={y}
             ref={(ref) => (divGrid.current[x][y] = ref)}
-            onClick={(e) => toggleCellState(e)}
+            onMouseEnter={(e) => handleCellClick(e)}
           >
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="50" />
@@ -89,28 +105,17 @@ export default function LifeGrid() {
         if (isAlive(x, y)) {
           if (liveNeighbours < 2 || liveNeighbours > 3) {
             newIndexGrid[x][y] = CellStatus.DEAD;
-            divGrid.current[x][y].classList.remove("alive");
+            toggleCellState(divGrid.current[x][y])
           }
         } else {
           if (liveNeighbours === 3) {
             newIndexGrid[x][y] = CellStatus.ALIVE;
-            divGrid.current[x][y].classList.add("alive");
+            toggleCellState(divGrid.current[x][y])
           }
         }
       });
     });
     indexGrid.current = JSON.parse(JSON.stringify(newIndexGrid));
-  };
-
-  // Check if a cell is alive on the currently rendered grid
-  const isAlive = (x, y) => {
-    if (
-      indexGrid.current[x] !== undefined &&
-      indexGrid.current[x][y] !== undefined
-    ) {
-      return indexGrid.current[x][y];
-    }
-    return false;
   };
 
   // Check how many living neighbours a cell has
@@ -144,7 +149,7 @@ export default function LifeGrid() {
   };
 
   return (
-    <div>
+    <div className="life-grid-root">
       <div className="button-container">
         <button
           className="button tick-once"
