@@ -37,8 +37,8 @@
 
   .grid-wrapper {
     display: grid;
-    grid-template-columns: repeat($DIMENSIONS, 1fr);
-    grid-template-rows: repeat($DIMENSIONS, 1fr);
+    grid-template-columns: repeat($WIDTH, 1fr);
+    grid-template-rows: repeat($HEIGHT, 1fr);
     box-sizing: border-box;
     width: fit-content;
     margin: auto;
@@ -58,16 +58,21 @@
         width: 35%;
         height: 35%;
         pointer-events: none;
+        transition: all 1s;
+        opacity: 0.2;
       }
       &:hover {
-        background-color: $CELL_DEAD_COLOR;
+        svg {
+          width: 99%;
+          height: 99%;
+        }
       }
       &.dead {
         svg {
           width: 35%;
           height: 35%;
           fill: $CELL_DEAD_COLOR;
-          transition: all 0.5s;
+          
         }
       }
       &.alive {
@@ -75,7 +80,7 @@
           width: 99%;
           height: 99%;
           fill: $CELL_ALIVE_COLOR;
-          transition: all 0.2s ease-in;
+          opacity: 1;
         }
       }
     }
