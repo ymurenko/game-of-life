@@ -9,6 +9,7 @@ import "./LifeGrid.scss";
 
 const GRID_WIDTH = 32;
 const GRID_HEIGHT = 18;
+const CELL_FILL_DEAD = { fill: 'rgb(0,75,150)' };
 
 const CellStatus = {
   ALIVE: true,
@@ -23,7 +24,6 @@ export default function LifeGrid() {
   const tickInterval = useRef();
   const [autoTick, setAutoTick] = useState(true);
   const [grid, setGrid] = useState();
-  
 
   // Check if a cell is alive on the currently rendered grid
   const isAlive = (x, y) => {
@@ -36,30 +36,49 @@ export default function LifeGrid() {
     return false;
   };
 
-  const toggleCellState = useCallback((cell) => {
-    const rgb = 255 - (numAlive.current / (GRID_HEIGHT * GRID_WIDTH)) * 255
-    const x = parseInt(cell.getAttribute("row"));
-    const y = parseInt(cell.getAttribute("col"));
-    cell.classList.toggle("alive");
-    cell.children[0].style.fill = `rgb(${rgb * x / GRID_HEIGHT}, ${rgb * y / GRID_HEIGHT}, ${
-      rgb* (x + y) / (GRID_HEIGHT + GRID_WIDTH)
-    })`;
-    // cell.classList.toggle("dead");
-  }, [numAlive]);
-
-  const handleCellClick = (e) => {
-    const x = parseInt(e.target.getAttribute("row"));
-    const y = parseInt(e.target.getAttribute("col"));
+  const setCellColor = (x, y, r, g, b) => {
     if (
-      divGrid.current[x] !== undefined &&
-      divGrid.current[x][y] !== undefined
+      indexGrid.current[x] !== undefined &&
+      indexGrid.current[x][y] !== undefined
     ) {
-      toggleCellState(divGrid.current[x][y]);
-      indexGrid.current[x][y] = !indexGrid.current[x][y];
+      divGrid.current[x][y].children[0].style.fill = `rgb(${r}, ${g}, ${b})`;
     }
   };
 
-  const initGrid = () => {
+  const toggleCellState = useCallback(
+    (cell) => {
+      const rgb = (numAlive.current / (GRID_HEIGHT * GRID_WIDTH)) * 500;
+      const x = parseInt(cell.getAttribute("row"));
+      const y = parseInt(cell.getAttribute("col"));
+      cell.classList.toggle("alive");
+      if(!cell.classList.contains("alive")){
+        cell.children[0].style = CELL_FILL_DEAD
+      }
+      // cell.children[0].style.fill = `rgb(${rgb}, ${126}, ${
+      //   126
+      // })`;
+      // cell.classList.toggle("dead");
+    },
+    [numAlive]
+  );
+
+  const handleCellClick = useCallback(
+    (e) => {
+      const x = parseInt(e.target.getAttribute("row"));
+      const y = parseInt(e.target.getAttribute("col"));
+      if (
+        divGrid.current[x] !== undefined &&
+        divGrid.current[x][y] !== undefined
+      ) {
+        toggleCellState(divGrid.current[x][y]);
+        indexGrid.current[x][y] = !indexGrid.current[x][y];
+      }
+    },
+    [toggleCellState]
+  );
+
+  const initGrid = useCallback(() => {
+    numAlive.current = 0;
     indexGrid.current = [...Array(GRID_HEIGHT)].map(() =>
       Array(GRID_WIDTH).fill(CellStatus.DEAD)
     );
@@ -80,9 +99,7 @@ export default function LifeGrid() {
             <svg
               viewBox="0 0 100 100"
               xmlns="http://www.w3.org/2000/svg"
-              style={{fill: `rgb(${255 * x / GRID_HEIGHT}, ${190 * y / GRID_HEIGHT}, ${
-                150* (x + y) / (GRID_HEIGHT + GRID_WIDTH)
-              })`}}
+              style={CELL_FILL_DEAD}
             >
               <circle cx="50" cy="50" r="50" />
             </svg>
@@ -93,7 +110,7 @@ export default function LifeGrid() {
       col = [];
     }
     setGrid(row);
-  };
+  }, [handleCellClick]);
 
   useEffect(() => {
     initGrid();
@@ -159,7 +176,10 @@ export default function LifeGrid() {
     if (isAlive(x + 1, y + 1)) {
       count++;
     }
-    numAlive.current = count;
+    const red = (count / 7) * 255;
+    // const bias = (numAlive.current / (GRID_HEIGHT * GRID_WIDTH)) * 150;
+    console.log(numAlive.current);
+    setCellColor(x, y, red, red + 100, 150);
     return count;
   };
 
