@@ -59,12 +59,11 @@
         height: 35%;
         pointer-events: none;
         transition: all 1s;
-        opacity: 0.2;
       }
       &:hover {
         svg {
-          width: 99%;
-          height: 99%;
+        width: 99% !important;
+          height: 99% !important;
         }
       }
       &.dead {
@@ -81,6 +80,7 @@
           height: 99%;
           fill: $CELL_ALIVE_COLOR;
           opacity: 1;
+
         }
       }
     }

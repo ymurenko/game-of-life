@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./LifeGrid.scss";
+import gliderGun from "../../Constructs/gliderGun.json";
 
 /***************************** RULES OF CONWAY'S GAME OF LIFE: **********************************
   1. Any live cell with two or three live neighbours survives.
@@ -7,9 +8,9 @@ import "./LifeGrid.scss";
   3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 *************************************************************************************************/
 
-const GRID_WIDTH = 32;
-const GRID_HEIGHT = 18;
-const CELL_FILL_DEAD = { fill: 'rgb(0,75,150)' };
+const GRID_WIDTH = 40;
+const GRID_HEIGHT = 20;
+const CELL_FILL_DEAD = { fill: "rgb(0,75,120)" };
 
 const CellStatus = {
   ALIVE: true,
@@ -36,30 +37,53 @@ export default function LifeGrid() {
     return false;
   };
 
-  const setCellColor = (x, y, r, g, b) => {
+  const setCellColor = (count, x, y) => {
+    const bias = count / 7;
+    const red = bias * 255;
     if (
       indexGrid.current[x] !== undefined &&
       indexGrid.current[x][y] !== undefined
     ) {
-      divGrid.current[x][y].children[0].style.fill = `rgb(${r}, ${g}, ${b})`;
+      divGrid.current[x][y].children[0].style.fill = `rgb(${red}, ${
+        red + 75
+      }, ${120})`;
+      if (!isAlive(x, y)) {
+        divGrid.current[x][y].children[0].style.width = "35%";
+        divGrid.current[x][y].children[0].style.height = "35%";
+      } else {
+        divGrid.current[x][y].children[0].style.width = `${35 + bias * 100}%`;
+        divGrid.current[x][y].children[0].style.height = `${35 + bias * 100}%`;
+      }
     }
   };
 
   const toggleCellState = useCallback(
     (cell) => {
-      const rgb = (numAlive.current / (GRID_HEIGHT * GRID_WIDTH)) * 500;
+      // const rgb = (numAlive.current / (GRID_HEIGHT * GRID_WIDTH)) * 500;
       const x = parseInt(cell.getAttribute("row"));
       const y = parseInt(cell.getAttribute("col"));
       cell.classList.toggle("alive");
-      if(!cell.classList.contains("alive")){
-        cell.children[0].style = CELL_FILL_DEAD
+      if (
+        indexGrid.current[x] !== undefined &&
+        indexGrid.current[x][y] !== undefined
+      ) {
+        if(isAlive(x,y)){
+          divGrid.current[x][y].children[0].style.width = "100%";
+          divGrid.current[x][y].children[0].style.height = "100%";
+        } else {
+          divGrid.current[x][y].children[0].style.width = "35%";
+          divGrid.current[x][y].children[0].style.height = "35%";
+        }
       }
+      // if(!cell.classList.contains("alive")){
+      //   cell.children[0].style = CELL_FILL_DEAD
+      // }
       // cell.children[0].style.fill = `rgb(${rgb}, ${126}, ${
       //   126
       // })`;
       // cell.classList.toggle("dead");
     },
-    [numAlive]
+    []
   );
 
   const handleCellClick = useCallback(
@@ -70,8 +94,8 @@ export default function LifeGrid() {
         divGrid.current[x] !== undefined &&
         divGrid.current[x][y] !== undefined
       ) {
-        toggleCellState(divGrid.current[x][y]);
         indexGrid.current[x][y] = !indexGrid.current[x][y];
+        toggleCellState(divGrid.current[x][y]);
       }
     },
     [toggleCellState]
@@ -94,7 +118,7 @@ export default function LifeGrid() {
             row={x}
             col={y}
             ref={(ref) => (divGrid.current[x][y] = ref)}
-            onMouseEnter={(e) => handleCellClick(e)}
+            onMouseOver={(e) => handleCellClick(e)}
           >
             <svg
               viewBox="0 0 100 100"
@@ -118,7 +142,7 @@ export default function LifeGrid() {
 
   useEffect(() => {
     if (autoTick) {
-      tickInterval.current = setInterval(() => updateGrid(), 500);
+      tickInterval.current = setInterval(() => updateGrid(), 250);
     } else {
       clearInterval(tickInterval.current);
     }
@@ -133,6 +157,7 @@ export default function LifeGrid() {
     newIndexGrid.forEach((col, x) => {
       col.forEach((_, y) => {
         const liveNeighbours = numLiveNeighbours(x, y);
+        setCellColor(liveNeighbours, x, y);
         if (isAlive(x, y)) {
           if (liveNeighbours < 2 || liveNeighbours > 3) {
             newIndexGrid[x][y] = CellStatus.DEAD;
@@ -176,16 +201,20 @@ export default function LifeGrid() {
     if (isAlive(x + 1, y + 1)) {
       count++;
     }
-    const red = (count / 7) * 255;
-    // const bias = (numAlive.current / (GRID_HEIGHT * GRID_WIDTH)) * 150;
-    console.log(numAlive.current);
-    setCellColor(x, y, red, red + 100, 150);
     return count;
   };
 
+  const exportGrid = () => {
+      let a = document.createElement("a");
+      let file = new Blob([JSON.stringify(indexGrid.current)], { type: "application/json" });
+      a.href = URL.createObjectURL(file);
+      a.download = "grid.json";
+      a.click();
+  }
+
   return (
     <div className="life-grid-root">
-      {/* <div className="button-container">
+      <div className="button-container">
         <button
           className="button tick-once"
           disabled={autoTick}
@@ -199,7 +228,21 @@ export default function LifeGrid() {
         >
           Auto tick
         </button>
-      </div> */}
+        <button
+          className={`button`}
+          onClick={exportGrid}
+        >
+          Export grid
+        </button>
+        <button
+          className={`button`}
+          onClick={() => {
+            indexGrid.current = JSON.parse(JSON.stringify(gliderGun));
+          }}
+        >
+          Load glider gun
+        </button>
+      </div>
       <div className="grid-wrapper" ref={gridWrapper}>
         {grid}
       </div>
